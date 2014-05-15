@@ -1,6 +1,4 @@
 
-# TODO: Parse arguments
-# ./pysqlall.py -u username -p password -d databases -s script
 # TODO: object design
 
 # Config file example
@@ -41,3 +39,14 @@ class configuration(object):
         """
 
         pass
+
+
+import argparse
+parser = argparse.ArgumentParser(description = "Tool for running SQL code on multiple databases")
+parser.add_argument("-u", "--username", help="username for connecting to database")
+parser.add_argument("-p", "--password", help="password for connecting to database")
+parser.add_argument("-d", "--database", help="connection string for database")
+parser.add_argument("-s", "--script", help="file containing SQL code")
+args = parser.parse_args()
+
+print "Here comes the sun..."
