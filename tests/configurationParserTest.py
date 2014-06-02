@@ -12,13 +12,13 @@ class TestConfigurationParser(unittest.TestCase):
         pass
 
         
-    def testCreationOfConfigurationParserWithEmptyConfiguration(self):
-        #self.cp = configurationParser.ConfigurationParser()
-        self.assertRaisesRegexp(ValueError, "Configuration is empty!", configurationParser.ConfigurationParser, "")
+    #def testCreationOfConfigurationParserWithEmptyConfiguration(self):
+        ##self.cp = configurationParser.ConfigurationParser()
+        #self.assertRaisesRegexp(ValueError, "Configuration is empty!", configurationParser.ConfigurationParser, "")
 
-    def testCreationOfConfigurationParserWithWhitespaceConfiguration(self):
-        #self.cp = configurationParser.ConfigurationParser()
-        self.assertRaisesRegexp(ValueError, "Configuration is empty!", configurationParser.ConfigurationParser, " \n  \t  ")
+    #def testCreationOfConfigurationParserWithWhitespaceConfiguration(self):
+        ##self.cp = configurationParser.ConfigurationParser()
+        #self.assertRaisesRegexp(ValueError, "Configuration is empty!", configurationParser.ConfigurationParser, " \n  \t  ")
 
     def testCreationOfConfigurationParserWithInlineConfiguration(self):
         self.cp = configurationParser.ConfigurationParser("oracle;hr;hr;hrdb.example.com;script")
@@ -48,22 +48,19 @@ class TestConfigurationParser(unittest.TestCase):
         self.cp = configurationParser.ConfigurationParser("@/tmp/nonexistent.sql")
         self.assertRaisesRegexp(ValueError, "Configuration file /tmp/nonexistent.sql does not exists!", self.cp.parse)
 
-    def testConfigurationParserWithSimpleConfigurationBeforeParsing(self):
-        self.cp = configurationParser.ConfigurationParser("oracle;hr;hrpwd;hrdb.example.com;script")
-        self.assertListEqual(self.cp.databases, [])
 
     def testConfigurationParserWithCorrectSingleLineConfiguration(self):
         self.cp = configurationParser.ConfigurationParser("oracle;hr;hrpwd;hrdb.example.com;script")
-        self.cp.parse()
+        self.databases = self.cp.parse()
         self.d = database.Database("oracle","hr","hrpwd","hrdb.example.com","script")
-        self.assertListEqual(self.cp.databases, [self.d])
+        self.assertListEqual(self.databases, [self.d])
 
     def testConfigurationParserWithCorrectMultipleLineConfiguration(self):
         self.cp = configurationParser.ConfigurationParser("oracle;hr;hrpwd;hrdb.example.com;script\noracle;hr2;hrpwd2;hrdb2.example.com;script2")
-        self.cp.parse()
+        self.databases = self.cp.parse()
         self.d1 = database.Database("oracle","hr","hrpwd","hrdb.example.com","script")
         self.d2 = database.Database("oracle","hr2","hrpwd2","hrdb2.example.com","script2")
-        self.assertListEqual(self.cp.databases, [self.d1, self.d2])
+        self.assertListEqual(self.databases, [self.d1, self.d2])
         
 
     def testFileConfigurationParserWithCorrectSingleLineConfiguration(self):
@@ -73,9 +70,9 @@ class TestConfigurationParser(unittest.TestCase):
         self.f.close()
 
         self.cp = configurationParser.ConfigurationParser('@' + filename)
-        self.cp.parse()
+        self.databases = self.cp.parse()
         self.d = database.Database("oracle","hr","hrpwd","hrdb.example.com","script")
-        self.assertListEqual(self.cp.databases, [self.d])
+        self.assertListEqual(self.databases, [self.d])
         os.remove(filename)
 
     def testFileConfigurationParserWithCorrectMultipleLineConfiguration(self):
@@ -85,10 +82,10 @@ class TestConfigurationParser(unittest.TestCase):
         self.f.close()
 
         self.cp = configurationParser.ConfigurationParser('@' + filename)
-        self.cp.parse()
+        self.databases = self.cp.parse()
         self.d1 = database.Database("oracle","hr","hrpwd","hrdb.example.com","script")
         self.d2 = database.Database("oracle","hr2","hrpwd2","hrdb2.example.com","script2")
-        self.assertListEqual(self.cp.databases, [self.d1, self.d2])
+        self.assertListEqual(self.databases, [self.d1, self.d2])
         os.remove(filename)
 
 

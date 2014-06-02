@@ -16,11 +16,6 @@ class ConfigurationParser(object):
 
     def __init__(self, configuration = ""):
     
-        self.databases = []
-
-        if configuration.strip() == "":
-            raise ValueError("Configuration is empty!")
-
         self.configuration = configuration
 
         if configuration[0] == '@':
@@ -29,17 +24,21 @@ class ConfigurationParser(object):
             self.configurationType = self.INLINE
 
     def parse(self):
+        
+        databases = []
+
         if self.configurationType == self.INLINE:
-            self.doParsing(self.configuration.split('\n'))
+            databases = self.doParsing(self.configuration.split('\n'))
 
         if self.configurationType == self.FILE:
             try:
                 handle = open(self.configuration[1:])
-                self.doParsing(handle.readlines()) 
+                databases = self.doParsing(handle.readlines()) 
                 handle.close()
             except IOError:
                 raise ValueError('Configuration file %s does not exists!' % self.configuration[1:])
             
+        return databases
             
 
 
@@ -49,6 +48,8 @@ class ConfigurationParser(object):
             to fill configuration object with values
         """
         
+        databases = []
+
         #lines = self.configurationContent.split('\n')
         i = 1
         for line in configurationContent:
@@ -60,8 +61,9 @@ class ConfigurationParser(object):
                 raise ValueError("Configuration on line %d has incorrect format - too few semicolons!" % i)
 
             type, username, password, connection, script = line.split(';')
-            self.databases.append(database.Database(type, username, password, connection, script))
+            databases.append(database.Database(type, username, password, connection, script))
             i+=1
 
+        return databases
             
 
